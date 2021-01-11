@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Duck</title>
+  <script type="module">
+    import * as THREE from '../node_modules/three/build/three.module.js';
+    import { OBJLoader2 } from '../node_modules/three/examples/jsm/loaders/OBJLoader2.js';
+    import { MTLLoader } from '../node_modules/three/examples/jsm/loaders/MTLLoader.js';
+    import { MtlObjBridge } from '../node_modules/three/examples/jsm/loaders/obj2/bridge/MtlObjBridge.js'
+
+    let mouseX = 0;
+    let mouseY = 0;
+
+    document.onmousemove = function (event) {
+      mouseX = event.pageX;
+      mouseY = event.pageY;
+    };
+
+    export default function main() {
+      const canvas = document.querySelector('#c');
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
+      renderer.setSize(1000, 500);
+      const fov = 75;
+      const aspect = 2;  // the canvas default
+      const near = 0.1;
+      const far = 5;
+      const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+      camera.position.z = 2;
+      const scene = new THREE.Scene();
+
+      {
+        const color = 0xFFFFFF;
+        const intensity = 0.7;
+        const light = new THREE.DirectionalLight(color, intensity);
+        light.position.set(-1, 2, 4);
+        scene.add(light);
+      }
+
+      {
+        const color = 0xFFFFFF;
+        const intensity = 1;
+        const light = new THREE.AmbientLight(color, intensity);
+        scene.add(light);
+      }
+
+      const mtlLoader = new MTLLoader();
+      mtlLoader.load('duck.mtl', (mtlParseResult) => {
+        const materials = MtlObjBridge.addMaterialsFromMtlLoader(mtlParseResult);
+        materials.Duck.shininess = 2;
+        const objLoader = new OBJLoader2();
+        objLoader.addMaterials(materials);
+        objLoader.load('duck.obj', (duck) => {
+          scene.add(duck);
+
+          function render() {
+            duck.rotation.x = mouseY / window.innerHeight;
+            duck.rotation.y = mouseX / window.innerWidth - 0.5;
+          
+            renderer.render(scene, camera);
+          
+            requestAnimationFrame(render);
+          }
+
+          requestAnimationFrame(render);
+        });
+      });
+    }
+
+    main();
+  </script>
+  <style>
+    body {
+      position: relative;
+      margin: 0;
+      display: flex;
+      height: 100vh;
+      justify-content: center;
+      background: MediumTurquoise;
+      font-family: sans-serif;
+    }
+
+    #c {
+      height: 500px;
+      width: 1000px;
+      align-self: center;
+    }
+
+    @keyframes quack {
+      from {
+        transform: translateX(0) translateY(0) scale(1);
+      }
+
+      to {
+        transform: translateX(100px) translateY(-300px) scale(0.1);
+      }
+    }
+
+    .quack {
+      position: absolute;
+      font-weight: bold;
+      font-size: 2em;
+      top: 300px;
+      left: 55%;
+      color: white;
+      animation: quack 1.5s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <p class="quack">QUACK</p>
+</body>
+</html>
