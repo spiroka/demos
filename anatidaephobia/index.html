@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Duck</title>
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --font-size-base: 1.3em;
+      --font-size-h2: 2.5em;
+      --font-size-h1: 5em;
+      --line-height-base: 1.5;
+    }
+
+    body {
+      position: relative;
+      margin: 0;
+      display: flex;
+      height: 100vh;
+      font-family: sans-serif;
+      color: white;
+    }
+    
+    html {
+      font-size: 100%;
+    }
+
+    body * {
+      font-family: 'IBM Plex Serif', sans-serif;
+      color: whitesmoke;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5 {
+      line-height: 1.2;
+    }
+
+    h1, h2, p {
+      margin-top: 0;
+      font-weight: normal;
+    }
+
+    h1 {
+      font-size: var(--font-size-h1);
+      margin-bottom: 0;
+    }
+
+    h2 {
+      font-size: var(--font-size-h2);
+      margin-bottom: calc(0.5em * var(--line-height-base));
+    }
+
+    p {
+      font-size: var(--font-size-base);
+      margin-bottom: calc(1em * var(--line-height-base));
+    }
+
+    #c {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 100%;
+      z-index: 1;
+    }
+
+    .description {
+      display: flex;
+      width: 50%;
+      height: 100%;
+      z-index: 2;
+    }
+
+    .description article {
+      margin-top: 7em;
+      padding: 3em;
+    }
+
+    #mute, #unmute {
+      position: absolute;
+      right: 50px;
+      bottom: 50px;
+      width: 50px;
+      height: 50px;
+      color: whitesmoke;
+      z-index: 2;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <section class="description">
+    <article>
+      <h1>
+        anatidaephobia
+      </h1>
+      <h2>
+        <i>(noun)</i>
+      </h2>
+      <p>
+        The fear that somewhere, somehow, a duck is watching you.
+      </p>
+    </article>
+  </section>
+  <img id="unmute" src="muted.svg" alt="Sound muted" />
+  <img id="mute" src="unmuted.svg" alt="Sound unmuted" />
+  <script type="module">
+    import * as THREE from '../node_modules/three/build/three.module.js';
+    import { OBJLoader2 } from '../node_modules/three/examples/jsm/loaders/OBJLoader2.js';
+
+    let mouseX = 0;
+    let mouseY = 0;
+
+    document.onmousemove = (event) => {
+      mouseX = event.pageX;
+      mouseY = event.pageY;
+    };
+
+    const vertexShader = `
+        varying vec2 vUv;
+
+        void main() {
+          vUv = uv;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `;
+    const fragmentShader = `
+      uniform sampler2D duckTexture;
+
+      varying vec2 vUv;
+
+      void main() {
+        vec4 fragColor = texture2D(duckTexture, vUv);
+        if (fragColor.r < 0.08) {
+          gl_FragColor = vec4(0.54, 0.0, 0.0, 1.0);
+        } else {
+          gl_FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+        }
+      }
+    `;
+    const thunder = new Audio('thunder.wav');
+    let lightning1Trigger = false;
+    let lightning2Trigger = false;
+    let muted = false;
+
+    function main() {
+      const canvas = document.querySelector('#c');
+      const renderer = new THREE.WebGLRenderer({ canvas, alpha: true, antialias: true });
+      renderer.setSize(canvas.clientWidth, canvas.clientHeight);
+      const fov = 75;
+      const aspect = canvas.clientWidth / canvas.clientHeight;
+      const near = 0.1;
+      const far = 100;
+      const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+      camera.position.z = 2;
+      const scene = new THREE.Scene();
+
+      {
+        const near = 1;
+        const far = 1.8;
+        const color = 0x00000F;
+        scene.fog = new THREE.Fog(color, near, far);
+        scene.background = new THREE.Color(color);
+      }
+
+      let directionalLight1;
+      {
+        const color = 0xFFFFFF;
+        const intensity = 0.5;
+        directionalLight1 = new THREE.DirectionalLight(color, intensity);
+        directionalLight1.position.set(0, -3, 4);
+        scene.add(directionalLight1);
+      }
+
+      let directionalLight2;
+      {
+        const color = 0xFFFFFF;
+        const intensity = 0.5;
+        directionalLight2 = new THREE.DirectionalLight(color, intensity);
+        directionalLight2.position.set(-3, 2, 4);
+        scene.add(directionalLight2);
+      }
+
+      let ambientLight;
+      {
+        const color = 0xFFFFFF;
+        const intensity = 1;
+        ambientLight = new THREE.AmbientLight(color, intensity);
+        scene.add(ambientLight);
+      }
+
+      const objLoader = new OBJLoader2();
+      const textureLoader = new THREE.TextureLoader();
+      const texture = textureLoader.load('duck.png');
+      texture.magFilter = THREE.NearestFilter;
+      texture.minFilter = THREE.NearestFilter;
+      const uniforms = { duckTexture: { value: texture } };
+      objLoader.addMaterials({
+        Duck: new THREE.MeshToonMaterial({ map: texture })
+      });
+      objLoader.load('duck.obj', (duck) => {
+        const duckEyes = duck.clone();
+        duckEyes.children[0].material = new THREE.ShaderMaterial({ vertexShader, fragmentShader, uniforms });
+        duckEyes.children[0].material.transparent = true;
+        duckEyes.position.z = 0.001;
+        duck.visible = false;
+        scene.add(duck);
+        scene.add(duckEyes);
+
+        function render() {
+          if (lightning1Trigger) {
+            duck.visible = true;
+            directionalLight1.intensity = 1.5;
+          } else {
+            directionalLight1.intensity = 0.5;
+          }
+
+          if (lightning2Trigger) {
+            directionalLight2.intensity = 1;
+          } else {
+            directionalLight2.intensity = 0.2;
+          }
+
+          duck.rotation.x = duckEyes.rotation.x = mouseY / window.innerHeight;
+          duck.rotation.y = duckEyes.rotation.y = mouseX / window.innerWidth - 0.5;
+        
+          renderer.render(scene, camera);
+        
+          requestAnimationFrame(render);
+        }
+
+        requestAnimationFrame(render);
+      });
+    }
+
+    setInterval(() => {
+      if (!muted) {
+        thunder.play();
+      }
+      lightning1Trigger = true;
+      setTimeout(() => {
+        lightning1Trigger = false;
+        lightning2Trigger = true;
+      }, 300);
+      setTimeout(() => {
+        lightning2Trigger = false;
+      }, 500);
+    }, 8000);
+
+    const muteButton = document.getElementById('mute');
+    const unmuteButton = document.getElementById('unmute');
+    unmuteButton.style.display = 'none';
+    muteButton.addEventListener('click', mute);
+    unmuteButton.addEventListener('click', unmute);
+
+    function mute() {
+      thunder.pause();
+      muted = true;
+      muteButton.style.display = 'none';
+      unmuteButton.style.display = 'block';
+    }
+
+    function unmute() {
+      muted = false;
+      muteButton.style.display = 'block';
+      unmuteButton.style.display = 'none';
+    }
+
+    main();
+  </script>
+</body>
+</html>
