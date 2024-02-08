@@ -1,0 +1,16 @@
+{
+  "name": "duck",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "vite build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "main": "index.js",
+  "dependencies": {
+    "three": "^0.124.0",
+    "vite": "^5.0.12"
+  },
+  "description": ""
+}

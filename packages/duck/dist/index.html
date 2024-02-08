@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Duck</title>
+  <script>
+    function quack() {
+      const audio = new Audio('quack.wav');
+      audio.play();
+    }
+  </script>
+  <style>
+    body {
+      position: relative;
+      margin: 0;
+      display: flex;
+      height: 100vh;
+      justify-content: center;
+      background: MediumTurquoise;
+      font-family: sans-serif;
+    }
+
+    #c {
+      height: 500px;
+      width: 1000px;
+      align-self: center;
+    }
+
+    @keyframes quack {
+      from {
+        transform: translateX(0) translateY(0) scale(1);
+      }
+
+      to {
+        transform: translateX(100px) translateY(-300px) scale(0.1);
+      }
+    }
+
+    .quack {
+      position: absolute;
+      font-weight: bold;
+      font-size: 2em;
+      top: 300px;
+      left: 55%;
+      color: white;
+      animation: quack 1.5s ease-in-out infinite;
+    }
+  </style>
+  <script type="module" crossorigin src="/assets/index-mSV9OfqR.js"></script>
+</head>
+<body>
+  <canvas id="c" onclick="quack();"></canvas>
+  <p class="quack">QUACK</p>
+</body>
+</html>

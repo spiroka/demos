@@ -1,13 +1,17 @@
 {
   "name": "demos",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {},
+  "workspaces": [
+    "packages",
+    "packages/anatidaephobia",
+    "packages/duck"
+  ],
+  "scripts": {
+    "build": "npm run build --workspace packages/*"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "three": "^0.124.0"
-  }
+  "dependencies": {},
+  "description": ""
 }
