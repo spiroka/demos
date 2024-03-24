@@ -2,12 +2,10 @@
   "name": "demos",
   "version": "1.0.0",
   "workspaces": [
-    "packages",
-    "packages/anatidaephobia",
-    "packages/duck"
+    "packages/*"
   ],
   "scripts": {
-    "build": "npm run build --workspace packages/*"
+    "build": "npm run build --workspaces"
   },
   "keywords": [],
   "author": "",
