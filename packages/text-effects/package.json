@@ -1,0 +1,12 @@
+{
+  "name": "text-effects",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "mkdir -p ../../build/text-effects && cp -r ./ ../../build/text-effects"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "description": ""
+}

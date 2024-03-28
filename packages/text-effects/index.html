@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Text Effects</title>
+    <meta name="og:title" content="Text Effects">
+    <meta name="og:description" content="Text experiments with various techniques.">
+    <meta name="article:tag" content="CSS;svg">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.cdnfonts.com/css/mona-sans?styles=144319" rel="stylesheet">
+    <style>
+      body {
+        height: 100dvh;
+        margin: 0;
+        font-family: 'Mona-Sans';
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      #experiments, main {
+        width: 100%;
+        height: 100%;
+      }
+
+      footer {
+        width: 100%;
+        position: absolute;
+        bottom: 1em;
+        font-family: sans-serif;
+        font-size: .75em;
+        text-align: center;
+        color: #696969;
+
+        a {
+          color: currentColor;
+          text-shadow: 0 0 1px rgb(0 0 0 / .2);
+        }
+      }
+
+      .container:not(.hidden) {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        align-items: center;
+        justify-content: center;
+        background-image: var(--background);
+
+        h1 {
+          font-size: clamp(3rem, 20vw, 10rem);
+          text-align: center;
+          font-weight: 900;
+        }
+      }
+
+      #water {
+        --background: radial-gradient(circle at center, darkslategrey, black);
+
+        h1 {
+          background-image: url('wave.svg');
+          background-clip: text;
+          color: transparent;
+          text-shadow: 0 0 20px rgb(0 0 0 / 0.25);
+        }
+      }
+
+      #fire {
+        --background: radial-gradient(circle at bottom center, rgb(125 0 0 / .8) -60%, black 80%);
+
+        h1 {
+          background-image: radial-gradient(circle at bottom center, yellow, red);
+          background-clip: text;
+          color: transparent;
+        }
+      }
+
+      .controls {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        padding-block-start: 70dvh;
+        align-items: center;
+        justify-content: center;
+
+        div {
+          background: rgb(0 0 0 / .2);
+          border-radius: 1em;
+          backdrop-filter: blur(100px);
+          border: 1px solid rgb(255 255 255 / .1);
+          box-shadow: 0 0 5px rgb(0 0 0 / 0.2);
+        }
+
+        button {
+          font-family: system-ui;
+          font-size: clamp(1.2rem, 4vw, 2rem);
+          background: none;
+          border: none;
+          color: rgb(255 255 255 / .5);
+          text-shadow:
+            -1px -1px 0 rgb(0 0 0 / 0.25),
+            0 0 2px rgb(0 0 0 / 0.4);
+          height: 1em;
+          line-height: 1;
+          padding: 0;
+          cursor: pointer;
+          margin: .25em .5em;
+        }
+      }
+
+      .hidden {
+        display: none;
+      }
+  </style>
+  </head>
+  <body>
+    <main>
+      <div id="experiments">
+        <div id="water" class="container">
+          <h1>
+            WATER
+          </h1>
+        </div>
+        <div id="fire" class="hidden container">
+          <h1>
+            FIRE
+          </h1>
+        </div>
+      </div>
+      <div class="controls">
+        <div>
+          <button id="previous">←</button>
+          <button id="next">→</button>
+        </div>
+      </div>
+    </main>
+    <footer>
+      <p>Made by <a href="https://gergotakacs.dev">Gergő Takács</a> • <a href="https://github.com/spiroka/demos/tree/master/packages/text-effects">Source Code</a></p>
+    </footer>
+    <script>
+      const experiments = Array.from(document.getElementById('experiments').children);
+      const prevBtn = document.getElementById('previous');
+      const nextBtn = document.getElementById('next');
+
+      function showPrevious() {
+        const active = experiments.findIndex(el => !el.classList.contains('hidden'));
+        const previous = active === 0 ? experiments.length - 1 : active - 1;
+
+        document.startViewTransition(() => {
+          experiments[active].classList.add('hidden');
+          experiments[previous].classList.remove('hidden');
+        });
+      }
+
+      function showNext() {
+        const active = experiments.findIndex(el => !el.classList.contains('hidden'));
+        const next = active === experiments.length - 1 ? 0 : active + 1;
+
+        document.startViewTransition(() => {
+          experiments[active].classList.add('hidden');
+          experiments[next].classList.remove('hidden');
+        });
+      }
+
+      prevBtn.addEventListener('click', showPrevious);
+      nextBtn.addEventListener('click', showNext);
+
+      document.addEventListener('keydown', ({ code }) => {
+        switch (code) {
+          case 'ArrowLeft':
+            showPrevious();
+            break;
+          case 'ArrowRight':
+            showNext();
+            break;
+          default:
+            break;
+        }
+      });
+    </script>
+  </body>
+</html>
