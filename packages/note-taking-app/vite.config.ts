@@ -4,6 +4,9 @@ import path from 'path';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  build: {
+    outDir: '../../build/note-taking-app'
+  },
   resolve: {
     alias: {
       "@features": path.resolve(__dirname, "src/features"),
