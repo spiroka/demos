@@ -20,6 +20,7 @@ const queryClient = new QueryClient({
 const routeTree = rootRoute.addChildren([notesRoute.addChildren([noteRoute])]);
 
 const router = createRouter({
+  basepath: '/demos/note-taking-app',
   routeTree,
   defaultPreload: 'intent',
   defaultPreloadStaleTime: 0,
