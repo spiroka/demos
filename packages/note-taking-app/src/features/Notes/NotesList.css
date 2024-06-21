@@ -1,0 +1,37 @@
+.notes {
+  .notes__container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(40ch, 1fr));
+    margin-block-start: 2rem;
+    margin-inline: 10%;
+    gap: 3rem;
+
+    article {
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 0.2em;
+      padding: 1em;
+      height: 20rem;
+      background: var(--color-note-bg);
+
+      > p {
+        padding-block: 0.2em;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        flex: 1;
+      }
+
+      > button {
+        align-self: flex-end;
+      }
+    }
+  }
+
+  .notes__add {
+    position: fixed;
+    inset-block-end: 2rem;
+    inset-inline-end: 2rem;
+    z-index: 10;
+  }
+}

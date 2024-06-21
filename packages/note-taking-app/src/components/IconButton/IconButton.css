@@ -1,0 +1,12 @@
+.icon-button {
+  display: flex;
+  padding: 0.2em;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+
+  svg {
+    width: var(--button-size);
+    height: var(--button-size);
+  }
+}

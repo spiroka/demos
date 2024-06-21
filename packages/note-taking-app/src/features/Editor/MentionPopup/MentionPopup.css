@@ -1,0 +1,51 @@
+.add-mention {
+  position: relative;
+  display: inline-block;
+  height: 1lh;
+
+  input {
+    border: none;
+    background: transparent;
+    outline: none;
+  }
+
+  .add-mention__suggestions {
+    position: absolute;
+    width: 100%;
+    top: 1lh;
+    background: var(--color-note-bg);
+    border-radius: 0.2em;
+    box-shadow: 0 0 1rem rgb(0 0 0 / 0.2);
+
+    i {
+      padding: 0.5em;
+    }
+
+    button {
+      display: block;
+      width: 100%;
+      border: 0;
+      border-radius: 0;
+      padding-block: 0.5em;
+      background: transparent;
+      cursor: pointer;
+
+      &:hover, &:focus {
+        background: lightgrey;
+      }
+    }
+  }
+
+  .suggestion {
+    .suggestion__full-name {
+      display: block;
+      text-align: left;
+    }
+
+    .suggestion__username {
+      display: block;
+      text-align: left;
+      font-size: var(--font-size-small);
+    }
+  }
+}
