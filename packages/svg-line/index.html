@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>SVG Line Chart</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      body {
+        height: 200dvh;
+        margin-top: 50dvh;
+        background: black;
+      }
+
+      .chart {
+        filter: url(#filter);
+        display: block;
+        width: 40%;
+        margin-inline: auto;
+        stroke-dasharray: 1000;
+        stroke-dashoffset: 1000;
+        animation: draw linear;
+        animation-timeline: view();
+        animation-range: contain 30% exit 25%;
+      }
+
+      @keyframes draw {
+        from {
+          stroke-dashoffset: 1000;
+        }
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <svg class="chart" viewBox="0 0 200 100" xmlns="http://www.w3.org/2000/svg">
+      <path stroke="teal" fill="transparent" d="M 0 50 L 50 80 L 100 20 L 150 60 L 200 10" />
+      <filter id="filter">
+        <feDropShadow
+          dx="0.1"
+          dy="0.1"
+          stdDeviation="8"
+          flood-color="aqua"
+          flood-opacity="1"
+        />
+      </filter>
+    </svg>
+  </body>
+</html>
